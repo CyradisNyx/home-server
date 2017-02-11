@@ -1,0 +1,16 @@
+airplay==0.0.5
+appdirs==1.4.0
+click==6.7
+enum-compat==0.0.2
+Flask==0.12
+Flask-SQLAlchemy==2.1
+itsdangerous==0.24
+Jinja2==2.9.5
+MarkupSafe==0.23
+netifaces==0.10.5
+packaging==16.8
+pyparsing==2.1.10
+six==1.10.0
+SQLAlchemy==1.1.5
+Werkzeug==0.11.15
+zeroconf==0.18.0
