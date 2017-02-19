@@ -7,7 +7,7 @@ import os, glob, subprocess
 def transcode(path):
     if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
         os.remove(app.config['TEMP_DIR'] + "converted.mp4")
-    return subprocess.run(("ffmpeg -loglevel quiet -i " + path + " -vcodec copy -acodec copy -movflags empty_moov -f mp4 " + app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
+    return subprocess.run(("ffmpeg -loglevel quiet -i " + path + " -vcodec copy -acodec copy -scodec copy -f mp4 " + app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
 
 def airplay_background(video):
     ap = AirPlay('10.0.0.22')
@@ -32,7 +32,7 @@ def localplay(video):
 @app.route('/')
 @app.route('/home')
 def home():
-    movies = glob.glob(app.config['FILES_DIR'] + '*.m*')
+    movies = glob.glob(app.config['FILES_DIR'] + '*')
     movies = [movie.rsplit("/", 1)[-1] for movie in movies]
     print(movies)
     return render_template('home.html', movies = movies)
