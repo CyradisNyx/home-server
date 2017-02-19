@@ -13,7 +13,7 @@ def airplay_background(video):
     ap = AirPlay('10.0.0.22')
     if video[-4:] != ".mp4":
         transcode(app.config['FILES_DIR'] + video)
-        video = 'converted.mp4'
+        video = 'temp/converted.mp4'
     print(ap.play(app.config['MEDIA_URL'] + video))
     print(ap.playback_info())
     while True:
@@ -25,7 +25,7 @@ def airplay_background(video):
 def localplay(video):
     if video[-4:] != ".mp4":
         transcode(app.config['FILES_DIR'] + video)
-        video = 'converted.mp4'
+        video = 'temp/converted.mp4'
     return (app.config['MEDIA_URL'] + video)
 
 
