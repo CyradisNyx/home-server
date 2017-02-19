@@ -7,7 +7,7 @@ import os, glob, subprocess
 def transcode(path):
     if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
         os.remove(app.config['TEMP_DIR'] + "converted.mp4")
-    return subprocess.run(("ffmpeg -loglevel quiet -i " + path + " -vcodec copy -acodec copy -scodec copy -f mp4 " + app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
+    return subprocess.run(("avconv -loglevel quiet -i " + path + " -vcodec copy -acodec copy -scodec copy -f mp4 " + app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
 
 def airplay_background(video):
     ap = AirPlay('10.0.0.22')

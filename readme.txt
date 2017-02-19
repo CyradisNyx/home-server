@@ -11,4 +11,4 @@ Flask app designed to run on an RPi as a handy home general-purpose server
   - Figure out some way to be accessible from outside LAN
     - keyfile?
 
-Ensure ffmpeg installed
+Ensure ffmpeg/libav installed (edit views.py depending on which you use)
