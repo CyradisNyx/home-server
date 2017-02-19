@@ -1,14 +1,14 @@
 # home-server
 
-Flask app designed to run on an RPi as a handy home general-purpose server
-  - Media Centre
-    - Controlled from Mobile/Web App
-    - Spotify Integration
-    - Include Data on Movies/TV Shows from online
-    - Remember Episode I'm Up To
-  - Gmail Calendar + Inbox
-    - Organisation Tools
-  - Figure out some way to be accessible from outside LAN
-    - keyfile?
-
 Ensure ffmpeg/libav installed (edit views.py depending on which you use)
+
+DIY config
+  - Create instance folder in project dir
+  - "config.py"
+    - CSRF_SESSION_KEY
+    - SECRET_KEY
+    - FILES_DIR (for media)
+    - TEMP_DIR (for converted files and other misc)
+    - MEDIA_URL (for airplay, use a simple webserver of FILES_DIR)
+
+Moar Stuff Here
