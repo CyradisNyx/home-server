@@ -2,7 +2,7 @@ from flask import *
 from . import app
 from threading import Thread
 from airplay import AirPlay
-import os, glob, subprocess
+import os, glob2, subprocess
 
 def transcode(path):
     if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
@@ -33,7 +33,7 @@ def localplay(video):
 @app.route('/home')
 def home():
     MovieTypes = ('.mkv', '.avi', '.mp4')
-    movies = glob.glob(app.config['FILES_DIR'] + '/**/*.*', recursive = True)
+    movies = glob2.glob(app.config['FILES_DIR'] + '/**/*.*')
     movies = [movie.rsplit("/", 1)[-1] for movie in movies if movie.endswith(MovieTypes) and ("/temp/") not in movie]
     print(movies)
     return render_template('home.html', movies = movies)
