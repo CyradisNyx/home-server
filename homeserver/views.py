@@ -32,8 +32,9 @@ def localplay(video):
 @app.route('/')
 @app.route('/home')
 def home():
-    movies = glob.glob(app.config['FILES_DIR'] + '*')
-    movies = [movie.rsplit("/", 1)[-1] for movie in movies]
+    MovieTypes = ('.mkv', '.avi', '.mp4')
+    movies = glob.glob(app.config['FILES_DIR'] + '/**/*.*', recursive = True)
+    movies = [movie.rsplit("/", 1)[-1] for movie in movies if movie.endswith(MovieTypes) and ("/temp/") not in movie]
     print(movies)
     return render_template('home.html', movies = movies)
 
