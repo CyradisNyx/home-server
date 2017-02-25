@@ -1,3 +1,5 @@
+"""Public configuration for app."""
+
 import os
 
 # Application directory
@@ -13,5 +15,4 @@ THREADS_PER_PAGE = 2
 # Enable protection agains *Cross-site Request Forgery (CSRF)*
 CSRF_ENABLED = True
 
-#Debug Y/N
 DEBUG = True

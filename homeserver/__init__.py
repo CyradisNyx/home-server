@@ -1,7 +1,9 @@
+"""Initialise flask app."""
+
 from flask import Flask
 
-app = Flask(__name__, instance_relative_config = True)
+app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
-app.config.from_pyfile('config.py', silent = False)
+app.config.from_pyfile('config.py', silent=False)
 
-from . import views
+import homeserver.views
