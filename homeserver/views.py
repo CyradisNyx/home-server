@@ -1,47 +1,12 @@
 """Defines views and routes for app."""
 
-from airplay import AirPlay
 from flask import render_template
 from flask import request
-import glob2
 from homeserver import app
+from homeserver.streaming import airplay_background
+from homeserver.streaming import localplay
 import os
-import subprocess
 from threading import Thread
-
-
-def transcode(path):
-    """Transmux videos into mp4."""
-    if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
-        os.remove(app.config['TEMP_DIR'] + "converted.mp4")
-    return subprocess.call(("avconv -loglevel quiet -i " +
-                            path +
-                            " -vcodec copy -acodec copy -scodec copy -f mp4 " +
-                            app.config['TEMP_DIR'] +
-                            "converted.mp4"), shell=True)
-
-
-def airplay_background(video):
-    """Stream videos to Airplay device."""
-    ap = AirPlay('10.0.0.22')
-    if video[-4:] != ".mp4":
-        transcode(app.config['FILES_DIR'] + video)
-        video = 'temp/converted.mp4'
-    print(ap.play(app.config['MEDIA_URL'] + video))
-    print(ap.playback_info())
-    while True:
-        for ev in ap.events(block=False):
-            newstate = ev.get('state', None)
-            if newstate == 'stopped':
-                return
-
-
-def localplay(video):
-    """Stream videos to client device."""
-    if video[-4:] != ".mp4":
-        transcode(app.config['FILES_DIR'] + video)
-        video = 'temp/converted.mp4'
-    return (app.config['MEDIA_URL'] + video)
 
 
 @app.route('/')
@@ -55,12 +20,19 @@ def home():
 def movies():
     """List movies available."""
     MovieTypes = ('.mkv', '.avi', '.mp4')
-    movies = glob2.glob(app.config['FILES_DIR'] + '/**/*.*')
-    movies = [movie.rsplit("/", 1)[-1]
-              for movie in movies
-              if movie.endswith(MovieTypes) and ("/temp/") not in movie]
-    print(movies)
-    return render_template('movies.html', movies=movies)
+    Movies = {}
+    for root, dirs, files in os.walk(app.config['FILES_DIR']):
+        for file in files:
+            if file[0] == ".":
+                continue
+            MovieName = file.rsplit("/", 1)[-1]
+            print(MovieName)
+            if file.endswith(MovieTypes) and root == app.config['FILES_DIR']:
+                Movies[root + file] = MovieName
+            elif file.endswith(MovieTypes):
+                Movies[(root + "/" + file)] = MovieName
+    print(Movies)
+    return render_template('movies.html', movies=Movies)
 
 
 @app.route('/play')
@@ -77,5 +49,4 @@ def playlocal():
     """Play movie on client device."""
     video = request.args.get('video', '')
     url = localplay(video)
-    print(url)
     return render_template('playlocal.html', url=url, video=video)
