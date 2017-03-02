@@ -26,12 +26,10 @@ def movies():
             if file[0] == ".":
                 continue
             MovieName = file.rsplit("/", 1)[-1]
-            print(MovieName)
             if file.endswith(MovieTypes) and root == app.config['FILES_DIR']:
                 Movies[root + file] = MovieName
             elif file.endswith(MovieTypes):
                 Movies[(root + "/" + file)] = MovieName
-    print(Movies)
     return render_template('movies.html', movies=Movies)
 
 

@@ -10,4 +10,4 @@ DIY config
     - SECRET_KEY
     - FILES_DIR (for media)
     - TEMP_DIR (for converted files and other misc)
-    - MEDIA_URL (for airplay, use a simple webserver of FILES_DIR)
+    - MEDIA_URL (for airplay, use a simple webserver of FILES_DIR. DONT FORGET HTTP:// AT START OMG)

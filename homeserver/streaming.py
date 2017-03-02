@@ -9,11 +9,10 @@ def transcode(path):
     """Transmux videos into mp4."""
     if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
         os.remove(app.config['TEMP_DIR'] + "converted.mp4")
-    return subprocess.call(("ffmpeg -loglevel quiet -i " +
-                            path +
-                            " -vcodec copy -acodec copy -scodec copy -f mp4 " +
-                            app.config['TEMP_DIR'] +
-                            "converted.mp4"), shell=True)
+    subprocess.call(("ffmpeg -loglevel quiet -i " +
+                    path + " -vcodec copy -acodec copy -scodec copy -f mp4 " +
+                    app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
+    return
 
 
 def airplay_background(video):
@@ -34,4 +33,7 @@ def localplay(video):
     """Stream videos to client device."""
     if video[-4:] != ".mp4":
         transcode(video)
-    return (app.config['MEDIA_URL'] + "temp/converted.mp4")
+        video = "temp/converted.mp4"
+    else:
+        video = video.split(app.config['FILES_DIR'], 1)[1]
+    return (app.config['MEDIA_URL'] + video)
