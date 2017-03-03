@@ -1,4 +1,5 @@
 """Defines Functions for Streaming (Airplay, Transcoding, etc)."""
+
 from airplay import AirPlay
 from homeserver import app
 import os
@@ -9,9 +10,9 @@ def transcode(path):
     """Transmux videos into mp4."""
     if os.path.isfile(app.config['TEMP_DIR'] + "converted.mp4"):
         os.remove(app.config['TEMP_DIR'] + "converted.mp4")
-    subprocess.call(("ffmpeg -loglevel quiet -i " +
+    subprocess.call(("ffmpeg -i " +
                     path + " -vcodec copy -acodec copy -scodec copy -f mp4 " +
-                    app.config['TEMP_DIR'] + "converted.mp4"), shell=True)
+                    path[0:-3] + "mp4"), shell=True)  # && rm + path if needed
     return
 
 
@@ -33,7 +34,6 @@ def localplay(video):
     """Stream videos to client device."""
     if video[-4:] != ".mp4":
         transcode(video)
-        video = "temp/converted.mp4"
-    else:
-        video = video.split(app.config['FILES_DIR'], 1)[1]
+        video = video.replace(video[-4:], ".mp4")
+    video = video.split(app.config['FILES_DIR'], 1)[1]
     return (app.config['MEDIA_URL'] + video)
