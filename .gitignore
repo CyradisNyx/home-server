@@ -5,5 +5,6 @@ home_server/__pycache__/
 *$py.class
 
 instance/
+.cache/
 
 .DS_Store
