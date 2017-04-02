@@ -7,8 +7,7 @@ from imdbpie import Imdb
 class TestMovie:
     """Test IMDB Movie Calls."""
 
-    imdb = Imdb(anonymize=True)
-    title = imdb.get_title_by_id("tt0133093")
+    title = Imdb().get_title_by_id("tt0133093")
 
     def test_movietitle(self):
         """Test Movie Title."""
@@ -34,3 +33,9 @@ class TestMovie:
         """Test Run Time."""
         print(self.title.runtime)
         assert (int(self.title.runtime) / 60) == 136
+
+
+class TestTV:
+    """Test IMDB TV Show calls."""
+
+    title = Imdb().get_title_by_id('tt0944947')
