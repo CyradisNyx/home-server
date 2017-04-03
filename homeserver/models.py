@@ -18,7 +18,8 @@ class VideoFile(db.Model):
 
     def __init__(self, FilePath, IMDB_Key=None):
         """Constructor Method."""
-        self.ParseFileName()
+        if IMDB_Key is None:
+            IMDB_Key = self.FindID(FilePath)
 
         if IMDBMovieData.query.get(IMDB_Key) is None:
             db.session.add(IMDBMovieData(IMDB_Key=IMDB_Key))
@@ -31,23 +32,44 @@ class VideoFile(db.Model):
         """Return Pretty Formatted Summary of Model."""
         return '<VideoFile:{}, ID:{}>'.format(self.FilePath, self.id)
 
-    def ParseFileName(self, Path):
+    def FindID(self, Path):
         """Parse File Name and Output IMDB_Key."""
         data = PTN.parse(self.FilePath.rsplit("/", 1)[-1])
         moardata = Imdb().search_for_title(data['title'])
 
         self.FileType = data['container']
-        self.FileResolution = data['resolution']
+        if 'resolution' in data:
+            self.FileResolution = data['resolution']
         if 'audio' in data:
             self.AudioCodec = data['audio']
         if 'codec' in data:
             self.VideoCodec = data['codec']
 
-        for movie in moardata:
+        for item in moardata:
+            print(item)
             if 'year' not in data:
-                return movie['imdb_id']
-            if movie['year'] == str(data['year']):
-                return movie['imdb_id']
+                if 'season' not in data:
+                    return item['imdb_id']
+                else:
+                    id = item['imdb_id']
+                    break
+            elif item['year'] == str(data['year']):
+                if 'season' not in data:
+                    return item['imdb_id']
+                else:
+                    id = item['imdb_id']
+                    break
+
+        """Only TV Shows from here on."""
+        moardata = Imdb().get_episodes(id)
+        for episode in moardata:
+            if episode.season == data['season'] and episode.episode == data['episode']:
+                return episode.imdb_id
+
+    def CheckType(self, IMDB_Key):
+        """Check if Movie or Episode."""
+        title = Imdb().get_title_by_id(IMDB_Key)
+        return title.__class__.__name__
 
 
 class IMDBMovieData(db.Model):

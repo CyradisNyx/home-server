@@ -5,24 +5,10 @@ from imdbpie import Imdb
 from homeserver import models
 
 
-class TestTools:
-    """Test Misc API-Related Tools."""
-
-    FilePath = "/Users/sarah/Desktop/Coding/Caddy/Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
-
-    def test_filename(self):
-        """Separate FileName from Path."""
-        FileName = self.FilePath.rsplit("/", 1)[-1]
-        assert FileName == "Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
-
-    def test_findkey(self):
-        """Find IMDB_Key based on FileName."""
-        assert models.VideoFile.ParseFileName(self, self.FilePath) == 'tt0091042'
-
-
 class TestMovie:
     """Test IMDB Movie Calls."""
 
+    FilePath = "/Users/sarah/Desktop/Coding/Caddy/Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
     title = Imdb().get_title_by_id("tt0133093")
 
     def test_movietitle(self):
@@ -50,8 +36,26 @@ class TestMovie:
         print(self.title.runtime)
         assert (int(self.title.runtime) / 60) == 136
 
+    def test_filename(self):
+        """Separate FileName from Path."""
+        FileName = self.FilePath.rsplit("/", 1)[-1]
+        assert FileName == "Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
+
+    def test_findkey(self):
+        """Find IMDB_Key based on FileName."""
+        assert models.VideoFile.FindID(self, self.FilePath) == 'tt0091042'
+
+    def test_checktype(self):
+        """Check Type of VideoFile."""
+        assert models.VideoFile.CheckType(self, self.title.imdb_id) == 'Title'
+
 
 class TestTV:
     """Test IMDB TV Show calls."""
 
-    title = Imdb().get_title_by_id('tt0944947')
+    tvtitle = Imdb().get_title_by_id('tt4730012')
+
+    def test_checktype(self):
+        """Check Type of VideoFile."""
+        print(self.tvtitle.type)
+        assert models.VideoFile.CheckType(self, self.tvtitle.imdb_id) == 'Episode'
