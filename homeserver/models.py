@@ -1,6 +1,7 @@
 """Define models."""
 from homeserver import db
 from imdbpie import Imdb
+import PTN
 
 
 class VideoFile(db.Model):
@@ -9,20 +10,44 @@ class VideoFile(db.Model):
     __tablename__ = 'videofile'
     id = db.Column(db.Integer, primary_key=True)
     IMDBData = db.Column(db.String(30), db.ForeignKey('moviedata.IMDB_Key'))
-    FileName = db.Column(db.String(180), unique=True)
+    FilePath = db.Column(db.String(180), unique=True)
+    FileType = db.Column(db.String(10))
+    FileResolution = db.Column(db.String(10))
+    AudioCodec = db.Column(db.String(10))
+    VideoCodec = db.Column(db.String(10))
 
-    def __init__(self, IMDB_Key, FileName):
+    def __init__(self, FilePath, IMDB_Key=None):
         """Constructor Method."""
+        self.ParseFileName()
+
         if IMDBMovieData.query.get(IMDB_Key) is None:
             db.session.add(IMDBMovieData(IMDB_Key=IMDB_Key))
             db.session.commit()
 
         self.IMDBData = IMDBMovieData.query.get(IMDB_Key)
-        self.FileName = FileName
+        self.FilePath = FilePath
 
     def __repr__(self):
         """Return Pretty Formatted Summary of Model."""
-        return '<VideoFile:{}, ID:{}>'.format(self.FileName, self.id)
+        return '<VideoFile:{}, ID:{}>'.format(self.FilePath, self.id)
+
+    def ParseFileName(self, Path):
+        """Parse File Name and Output IMDB_Key."""
+        data = PTN.parse(self.FilePath.rsplit("/", 1)[-1])
+        moardata = Imdb().search_for_title(data['title'])
+
+        self.FileType = data['container']
+        self.FileResolution = data['resolution']
+        if 'audio' in data:
+            self.AudioCodec = data['audio']
+        if 'codec' in data:
+            self.VideoCodec = data['codec']
+
+        for movie in moardata:
+            if 'year' not in data:
+                return movie['imdb_id']
+            if movie['year'] == str(data['year']):
+                return movie['imdb_id']
 
 
 class IMDBMovieData(db.Model):

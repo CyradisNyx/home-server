@@ -2,6 +2,22 @@
 
 import pytest
 from imdbpie import Imdb
+from homeserver import models
+
+
+class TestTools:
+    """Test Misc API-Related Tools."""
+
+    FilePath = "/Users/sarah/Desktop/Coding/Caddy/Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
+
+    def test_filename(self):
+        """Separate FileName from Path."""
+        FileName = self.FilePath.rsplit("/", 1)[-1]
+        assert FileName == "Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
+
+    def test_findkey(self):
+        """Find IMDB_Key based on FileName."""
+        assert models.VideoFile.ParseFileName(self, self.FilePath) == 'tt0091042'
 
 
 class TestMovie:

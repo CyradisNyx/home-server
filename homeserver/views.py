@@ -19,7 +19,7 @@ def home():
 @app.route('/movies')
 def movies():
     """List movies available."""
-    MovieTypes = ('.mkv', '.mp4', '.mov', 'm4v')
+    MovieTypes = ('.mkv', '.mp4', '.mov', '.m4v')
     Movies = {}
     for root, dirs, files in os.walk(app.config['FILES_DIR']):
         for file in files:
