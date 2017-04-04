@@ -1,6 +1,6 @@
 """Define models."""
 from homeserver import db
-from imdbpie import Imdb
+import omdb
 import PTN
 
 
@@ -35,7 +35,6 @@ class VideoFile(db.Model):
     def FindID(self, Path):
         """Parse File Name and Output IMDB_Key."""
         data = PTN.parse(self.FilePath.rsplit("/", 1)[-1])
-        moardata = Imdb().search_for_title(data['title'])
 
         self.FileType = data['container']
         if 'resolution' in data:
@@ -45,31 +44,21 @@ class VideoFile(db.Model):
         if 'codec' in data:
             self.VideoCodec = data['codec']
 
-        for item in moardata:
-            print(item)
-            if 'year' not in data:
-                if 'season' not in data:
-                    return item['imdb_id']
-                else:
-                    id = item['imdb_id']
-                    break
-            elif item['year'] == str(data['year']):
-                if 'season' not in data:
-                    return item['imdb_id']
-                else:
-                    id = item['imdb_id']
-                    break
+        if 'season' in data:
+            episode = omdb.get(episode=data['episode'], season=data['season'], title=data['title'])
+            return episode.imdb_id
+        else:
+            if 'year' in data:
+                moardata = omdb.get(title=data['title'], year=data['year'])
+            else:
+                moardata = omdb.get(title=data['title'])
 
-        """Only TV Shows from here on."""
-        moardata = Imdb().get_episodes(id)
-        for episode in moardata:
-            if episode.season == data['season'] and episode.episode == data['episode']:
-                return episode.imdb_id
+            return moardata.imdb_id
 
     def CheckType(self, IMDB_Key):
         """Check if Movie or Episode."""
-        title = Imdb().get_title_by_id(IMDB_Key)
-        return title.__class__.__name__
+        title = omdb.imdbid(IMDB_Key)
+        return title.type
 
 
 class IMDBMovieData(db.Model):
@@ -91,14 +80,14 @@ class IMDBMovieData(db.Model):
         self.IMDB_Key = IMDB_Key
         self.Watched = 0
 
-        title = Imdb().get_title_by_id(IMDB_Key)
+        title = omdb.imdbid(IMDB_Key)
 
         self.MovieTitle = title.title
-        self.CoverPic = title.poster_url
+        self.CoverPic = title.poster
         self.ReleaseDate = int(title.year)
-        self.FilmDescription = title.plot_outline
-        self.StarRating = title.rating
-        self.RunTime = (int(title.runtime) / 60)
+        self.FilmDescription = title.plot
+        self.StarRating = float(title.imdb_rating)
+        self.RunTime = int(self.title.runtime.split(" ")[0])
 
     def __repr__(self):
         """Return Pretty Formatted Summary of Model."""
