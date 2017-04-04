@@ -1,10 +1,38 @@
 <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Home Server</title>
+    <!-- Basic Setup -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MyStuff</title>
-<div class=page>
-  <h1>MyStuff</h1>
-  {% block titlebar %}
-  <p> Login \o/ </p>
-    {% endblock %}
-  {% block body %}{% endblock %}
-</div>
+    <!-- VideoJS Setup -->
+    <link href="http://vjs.zencdn.net/5.17.0/video-js.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+
+    <!-- MetroUI Setup -->
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-colors.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-schemes.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-icons.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-responsive.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-rtl.min.css">
+    <link rel="stylesheet" href="http://cdn.metroui.org.ua/css/metro-font-cdn.css">
+    <script src="http://cdn.metroui.org.ua/js/metro.min.js"></script>
+
+    <!-- Misc -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <div class="titlebar">
+      {% block titlebar %}
+      <h1>Welcome to Flask!</h1>
+      <p>Click <a href="/">here</a> to go home.</p>
+      {% endblock %}
+    </div>
+    {% block content %}{% endblock %}
+  </body>
+</html>

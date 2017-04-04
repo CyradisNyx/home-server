@@ -2,9 +2,51 @@
 
 {% extends "layout.html" %}
 
-{% block body %}
-  <h2>Home Page Omgz</h2>
-  <ul>
-    <li><a href = "{{ url_for('movies')}}">Movies :D</a></li>
-  </ul>
+{% block content %}
+
+<h3>Home Page Omgz</h3>
+
+<div class="tile-area no-padding">
+  <div class="tile-container">
+    <div class="cell">
+      <a href="{{ url_for('movies')}}" class="tile-wide bg-lightGreen">
+        <div class="tile-content iconic">
+          <span class="icon mif-film"></span>
+          <span class="tile-label">Movies</span>
+        </div>
+      </a>
+    </div>
+    <div class="cell">
+      <a href="https://en.wikipedia.org/" class="tile-wide bg-grey">
+        <div class="tile-content iconic">
+          <span class="icon mif-wikipedia"></span>
+        </div>
+      </a>
+    </div>
+    <div class="cell">
+      <div class="tile bg-blue">
+        <div class="tile-content iconic">
+          <span class="icon mif-music"></span>
+          <span class="tile-label">Music</span>
+        </div>
+      </div>
+    </div>
+    <div class="cell">
+      <div class="tile bg-darkPink">
+        <div class="tile-content iconic">
+          <span class="icon mif-earth fg-green"></span>
+        </div>
+        <div class="tile-label">This Is Much More Fun Than Bootstrap</div>
+      </div>
+    </div>
+    <div class="cell colspan2">
+      <div class="tile-big bg-orange">
+        <div class="tile-content iconic">
+          <span class="icon mif-blocked"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

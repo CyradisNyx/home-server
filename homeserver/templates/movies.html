@@ -2,18 +2,18 @@
 
 {% extends "layout.html" %}
 
-{% block body %}
-  <h2>
+{% block content %}
+  <h3>
     <font color = "blue">Movies on AirPlay</font>
-  </h2>
+  </h3>
   <ul>
     {% for movie in movies %}
       <li><a href = "{{ url_for('play', video=movie)}}"> {{ movies[movie] }} </a></li>
     {% endfor %}
   </ul>
-  <h2>
+  <h3>
     <font color = "green">Movies Locally</font>
-  </h2>
+  </h3>
   <ul>
     {% for movie in movies %}
       <li><a href = "{{ url_for('playlocal', video=movie)}}"> {{ movies[movie] }} </a></li>
