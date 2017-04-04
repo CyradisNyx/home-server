@@ -8,7 +8,7 @@ from homeserver import models
 class TestMovie:
     """Test IMDB Movie Calls."""
 
-    FilePath = "/Users/sarah/Desktop/Coding/Caddy/Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
+    file_path = "/Users/sarah/Desktop/Coding/Caddy/Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
     title = omdb.imdbid('tt0133093')
 
     def test_movietitle(self):
@@ -37,28 +37,28 @@ class TestMovie:
 
     def test_filename(self):
         """Separate FileName from Path."""
-        FileName = self.FilePath.rsplit("/", 1)[-1]
+        FileName = self.file_path.rsplit("/", 1)[-1]
         assert FileName == "Ferris.Bueller's.Day.Off.1986.1080p.BluRay.DTS.x264-FoRM.mkv"
 
     def test_findkey(self):
-        """Find IMDB_Key based on FileName."""
-        assert models.VideoFile.FindID(self, self.FilePath) == 'tt0091042'
+        """Find imdb_key based on FileName."""
+        assert models.videofile.FindID(self, self.file_path) == 'tt0091042'
 
     def test_checktype(self):
-        """Check Type of VideoFile."""
-        assert models.VideoFile.CheckType(self, self.title.imdb_id) == 'movie'
+        """Check Type of videofile."""
+        assert models.videofile.CheckType(self, self.title.imdb_id) == 'movie'
 
 
 class TestTV:
     """Test IMDB TV Show calls."""
 
-    tvtitle = omdb.imdbid('tt4730012')
-    FilePath = 'friends.s02e01.720p.bluray-sujaidr.mkv'
+    tv_title = omdb.imdbid('tt4730012')
+    file_path = 'friends.s02e01.720p.bluray-sujaidr.mkv'
 
     def test_findkey(self):
-        """Find IMDB_Key based on FileName."""
-        assert models.VideoFile.FindID(self, self.FilePath) == 'tt0583562'
+        """Find imdb_key based on FileName."""
+        assert models.videofile.FindID(self, self.file_path) == 'tt0583562'
 
     def test_checktype(self):
-        """Check Type of VideoFile."""
-        assert models.VideoFile.CheckType(self, self.tvtitle.imdb_id) == 'episode'
+        """Check Type of videofile."""
+        assert models.videofile.CheckType(self, self.tv_title.imdb_id) == 'episode'

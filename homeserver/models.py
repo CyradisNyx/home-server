@@ -4,45 +4,47 @@ import omdb
 import PTN
 
 
-class VideoFile(db.Model):
+class videofile(db.Model):
     """Store Movie Data."""
 
     __tablename__ = 'videofile'
     id = db.Column(db.Integer, primary_key=True)
-    IMDBData = db.Column(db.String(30), db.ForeignKey('moviedata.IMDB_Key'))
-    FilePath = db.Column(db.String(180), unique=True)
-    FileType = db.Column(db.String(10))
-    FileResolution = db.Column(db.String(10))
-    AudioCodec = db.Column(db.String(10))
-    VideoCodec = db.Column(db.String(10))
+    imdb_data = db.Column(db.String(30), db.ForeignKey('moviedata.imdb_key'))
+    file_path = db.Column(db.String(180), unique=True)
+    file_type = db.Column(db.String(10))
+    file_resolution = db.Column(db.String(10))
+    audio_codec = db.Column(db.String(10))
+    video_codec = db.Column(db.String(10))
 
-    def __init__(self, FilePath, IMDB_Key=None):
+    def __init__(self, file_path, imdb_key=None):
         """Constructor Method."""
-        if IMDB_Key is None:
-            IMDB_Key = self.FindID(FilePath)
+        self.file_path = file_path
 
-        if IMDBMovieData.query.get(IMDB_Key) is None:
-            db.session.add(IMDBMovieData(IMDB_Key=IMDB_Key))
+        if imdb_key is None:
+            imdb_key = self.FindID(file_path)
+
+        if moviedata.query.get(imdb_key) is None:
+            db.session.add(moviedata(imdb_key=imdb_key))
             db.session.commit()
 
-        self.IMDBData = IMDBMovieData.query.get(IMDB_Key)
-        self.FilePath = FilePath
+        self.imdb_data = moviedata.query.get(imdb_key)
 
     def __repr__(self):
         """Return Pretty Formatted Summary of Model."""
-        return '<VideoFile:{}, ID:{}>'.format(self.FilePath, self.id)
+        return '<videofile:{}, ID:{}>'.format(self.file_path, self.id)
 
     def FindID(self, Path):
-        """Parse File Name and Output IMDB_Key."""
-        data = PTN.parse(self.FilePath.rsplit("/", 1)[-1])
+        """Parse File Name and Output imdb_key."""
+        data = PTN.parse(self.file_path.rsplit("/", 1)[-1])
+        print(data)
 
-        self.FileType = data['container']
+        self.file_type = data['container']
         if 'resolution' in data:
-            self.FileResolution = data['resolution']
+            self.file_resolution = data['resolution']
         if 'audio' in data:
-            self.AudioCodec = data['audio']
+            self.audio_codec = data['audio']
         if 'codec' in data:
-            self.VideoCodec = data['codec']
+            self.video_codec = data['codec']
 
         if 'season' in data:
             episode = omdb.get(episode=data['episode'], season=data['season'], title=data['title'])
@@ -55,57 +57,57 @@ class VideoFile(db.Model):
 
             return moardata.imdb_id
 
-    def CheckType(self, IMDB_Key):
+    def CheckType(self, imdb_key):
         """Check if Movie or Episode."""
-        title = omdb.imdbid(IMDB_Key)
+        title = omdb.imdbid(imdb_key)
         return title.type
 
 
-class IMDBMovieData(db.Model):
+class moviedata(db.Model):
     """Store IMDB Data for Movies."""
 
     __tablename__ = 'moviedata'
-    IMDB_Key = db.Column(db.String(30), primary_key=True)
-    MovieTitle = db.Column(db.String(90))
-    CoverPic = db.Column(db.String(255))
-    ReleaseDate = db.Column(db.Integer)
-    FilmDescription = db.Column(db.String(255))
-    StarRating = db.Column(db.Float)    # Out of 10
-    RunTime = db.Column(db.Integer)  # In Minutes
-    Watched = db.Column(db.Integer)  # 0=unwatched, 1=inprogress, 2=watched
-    Files = db.relationship('VideoFile', backref='MovieData')
+    imdb_key = db.Column(db.String(30), primary_key=True)
+    movie_title = db.Column(db.String(90))
+    cover_pic = db.Column(db.String(255))
+    release_date = db.Column(db.Integer)
+    film_description = db.Column(db.String(255))
+    star_rating = db.Column(db.Float)    # Out of 10
+    runtime = db.Column(db.Integer)  # In Minutes
+    watched = db.Column(db.Integer)  # 0=unwatched, 1=inprogress, 2=watched
+    files = db.relationship('videofile', backref='moviedata')
 
-    def __init__(self, IMDB_Key):
+    def __init__(self, imdb_key):
         """Constructor Method and Populate Fields."""
-        self.IMDB_Key = IMDB_Key
-        self.Watched = 0
+        self.imdb_key = imdb_key
+        self.watched = 0
 
-        title = omdb.imdbid(IMDB_Key)
+        title = omdb.imdbid(imdb_key)
 
-        self.MovieTitle = title.title
-        self.CoverPic = title.poster
-        self.ReleaseDate = int(title.year)
-        self.FilmDescription = title.plot
-        self.StarRating = float(title.imdb_rating)
-        self.RunTime = int(self.title.runtime.split(" ")[0])
+        self.movie_title = title.title
+        self.cover_pic = title.poster
+        self.release_date = int(title.year)
+        self.film_description = title.plot
+        self.star_rating = float(title.imdb_rating)
+        self.runtime = int(title.runtime.split(" ")[0])
 
     def __repr__(self):
         """Return Pretty Formatted Summary of Model."""
-        return '<IMDBFileData:{}>'.format(self.MovieTitle)
+        return '<moviedata:{}>'.format(self.movie_title)
 
 
 '''
 class IMDBSeriesData(db.Model):
     """Store IMDB Data for TV Shows."""
 
-    IMDB_Key = db.Column(db.String(30), primary_key=True)
+    imdb_key = db.Column(db.String(30), primary_key=True)
     SeriesTitle = db.Column(db.String(90))
-    CoverPic = db.Column(db.String(180))
+    cover_pic = db.Column(db.String(180))
     SeriesDescription = db.Column(db.Text)
-    StarRating = db.Column(db.Float)
+    star_rating = db.Column(db.Float)
     NumberOfSeasons = db.Column(db.Integer)
     Seasons = db.relationship('IMDBSeasonData',
                               backref='Series',)
     NumberOfEpisodes = db.Column(db.Integer)
-    Watched = db.Column(db.Integer)
+    watched = db.Column(db.Integer)
 '''

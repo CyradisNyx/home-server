@@ -18,6 +18,7 @@ def create_app(config_name=''):
 
     db.init_app(app)
     with app.app_context():
+        import homeserver.models
         db.create_all()
 
     return app
