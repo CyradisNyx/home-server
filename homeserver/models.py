@@ -5,12 +5,11 @@ import PTN
 
 
 class videofile(db.Model):
-    """Store Movie Data."""
+    """Store File Data."""
 
     __tablename__ = 'videofile'
-    id = db.Column(db.Integer, primary_key=True)
-    imdb_data = db.Column(db.String(30), db.ForeignKey('moviedata.imdb_key'))
-    file_path = db.Column(db.String(180), unique=True)
+    imdb_key = db.Column(db.String(30))
+    file_path = db.Column(db.String(180), primary_key=True)
     file_type = db.Column(db.String(10))
     file_resolution = db.Column(db.String(10))
     audio_codec = db.Column(db.String(10))
@@ -19,26 +18,10 @@ class videofile(db.Model):
     def __init__(self, file_path, imdb_key=None):
         """Constructor Method."""
         self.file_path = file_path
-
-        if imdb_key is None:
-            imdb_key = self.FindID(file_path)
-
-        if moviedata.query.get(imdb_key) is None:
-            db.session.add(moviedata(imdb_key=imdb_key))
-            db.session.commit()
-
-        self.imdb_data = moviedata.query.get(imdb_key)
-
-    def __repr__(self):
-        """Return Pretty Formatted Summary of Model."""
-        return '<videofile:{}, ID:{}>'.format(self.file_path, self.id)
-
-    def FindID(self, Path):
-        """Parse File Name and Output imdb_key."""
         data = PTN.parse(self.file_path.rsplit("/", 1)[-1])
-        print(data)
 
-        self.file_type = data['container']
+        if 'container' in data:
+            self.file_type = data['container']
         if 'resolution' in data:
             self.file_resolution = data['resolution']
         if 'audio' in data:
@@ -46,6 +29,21 @@ class videofile(db.Model):
         if 'codec' in data:
             self.video_codec = data['codec']
 
+        if imdb_key is None:
+            imdb_key = self.FindID(file_path, data)
+
+        if moviedata.query.get(imdb_key) is None:
+            db.session.add(moviedata(imdb_key=imdb_key))
+            db.session.commit()
+
+        self.imdb_key = imdb_key
+
+    def __repr__(self):
+        """Return Pretty Formatted Summary of Model."""
+        return '<videofile:{}, imdb_key:{}>'.format(self.file_path, self.imdb_key)
+
+    def FindID(self, Path, data):
+        """Parse File Name and Output imdb_key."""
         if 'season' in data:
             episode = omdb.get(episode=data['episode'], season=data['season'], title=data['title'])
             return episode.imdb_id
@@ -75,7 +73,6 @@ class moviedata(db.Model):
     star_rating = db.Column(db.Float)    # Out of 10
     runtime = db.Column(db.Integer)  # In Minutes
     watched = db.Column(db.Integer)  # 0=unwatched, 1=inprogress, 2=watched
-    files = db.relationship('videofile', backref='moviedata')
 
     def __init__(self, imdb_key):
         """Constructor Method and Populate Fields."""

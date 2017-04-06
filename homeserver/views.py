@@ -1,10 +1,9 @@
 """Defines views and routes for app."""
 
-from flask import render_template
-from flask import request
-from homeserver import app
-from homeserver.streaming import airplay_background
-from homeserver.streaming import localplay
+from flask import render_template, request
+from homeserver import app, db
+from homeserver.models import videofile, moviedata
+from homeserver.streaming import airplay_background, localplay
 import os
 from threading import Thread
 
@@ -30,7 +29,18 @@ def movies():
                 Movies[root + file] = MovieName
             elif file.endswith(MovieTypes):
                 Movies[(root + "/" + file)] = MovieName
-    return render_template('movies.html', movies=Movies)
+
+    db_data = {}
+    for k, v in enumerate(Movies):
+        if db.session.query(db.exists().where(videofile.file_path == v)).scalar() is False:
+            temp = videofile(v)
+            db.session.add(temp)
+            db.session.commit()
+        temp = videofile.query.get(v)
+        print(temp)
+        db_data[v] = moviedata.query.get(temp.imdb_key)
+    print(db_data)
+    return render_template('movies.html', movies=db_data)
 
 
 @app.route('/play')
