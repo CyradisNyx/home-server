@@ -3,20 +3,24 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h3>
-    <font color = "blue">Movies on AirPlay</font>
-  </h3>
-  <ul>
+
+<div class="tile-area no-padding">
+  <div class="tile-container">
     {% for movie in movies %}
-      <li><a href = "{{ url_for('play', video=movie)}}"> {{ movies[movie] }} </a></li>
+      <div class="cell">
+        <a href="{{ url_for('playlocal', video=movie) }}" class="tile-wide">
+          <div class="tile-content">
+            <div class="frame">
+              <img src="{{ movies[movie].cover_pic }}" data-role="fitImage" data-format="square"/>
+            </div>
+            <div class="image-overlay">
+              {{ movies[movie].film_description }}
+            </div>
+          </div>
+        </a>
+      </div>
     {% endfor %}
-  </ul>
-  <h3>
-    <font color = "green">Movies Locally</font>
-  </h3>
-  <ul>
-    {% for movie in movies %}
-      <li><a href = "{{ url_for('playlocal', video=movie)}}"> {{ movies[movie] }} </a></li>
-    {% endfor %}
-  </ul>
+  </div>
+</div>
+
 {% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+{% extends "layout.html" %}
+
+{% block content %}
+  <h3>
+    <font color = "blue">Movies on AirPlay</font>
+  </h3>
+  <ul>
+    {% for movie in movies %}
+      <li><a href = "{{ url_for('play', video=movie)}}"> {{ movies[movie].movie_title }} </a></li>
+    {% endfor %}
+  </ul>
+  <h3>
+    <font color = "green">Movies Locally</font>
+  </h3>
+  <ul>
+    {% for movie in movies %}
+      <li><a href = "{{ url_for('playlocal', video=movie)}}"> {{ movies[movie].movie_title }} </a></li>
+      <li><img src="{{ movies[movie].cover_pic }}" alt="Movie Image" height="180" width="180"/></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
